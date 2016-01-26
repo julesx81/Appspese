@@ -1,0 +1,60 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</head>
+<title> App Spese </title>
+<body>
+<div class="container>
+	<div class="jumbotron"> 
+		<h1><mark>APP SPESE</mark></h1>
+	 </div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-6">	
+				<table class="table">
+							<tr>
+								<td> Totale : {% if objNum > 1 %} {{ objNum }} spese {% else %} {{ objNum }} spesa {%endif%} </td>
+								<td>{{ importoSummed  }} €</td>
+							</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="col-sm-8">
+	<table class="table table-striped">
+			<thead>	
+				<tr>
+					<th>Desrizione</th>
+					<th>Importo</th>
+					<th>Categoria Spesa</th>
+					<th>Data Spesa</th>
+					<th>Tipo di Pagamento</th>
+				</tr>
+			</thead>
+	{% for tblrow in tblUser %}
+				<tr>
+					<td>{{ tblrow.descrizione }}</td>
+					<td>{{ tblrow.importo }} €</td>
+					<td>{{ tblrow.catspesa }}</td>
+					<td>{{ tblrow.dataspesa }}</td>
+					<td>{{ tblrow.tipopagamento }}</td>
+				</tr>
+	{% endfor %}
+	</table>
+	
+	
+	</div>
+	<div class="col-sm-4">
+		<h3 class="bg-primary">FILTRI</h3>
+		<div class="list-group">
+			<a href="/appspesemodulo/" class="list-group-item">SPESE DEL MESE CORRENTE</a>
+			<a href="/appspesemodulo/provaApp" class="list-group-item">SPESE DEL MESE PRECEDENTE</a>
+		</div>
+	</div>
+</div>
+</body>
+</html>
