@@ -1,10 +1,10 @@
 #from __future__ import unicode_literals
 
 from django.db import models
-from django.contrib.auth.models import User 
 import datetime
 from django.utils import timezone
 from django.db.models import Sum
+
 
  
 
@@ -41,7 +41,7 @@ class userTable(models.Model):
     dataspesa = models.DateTimeField('Data Spesa')
     datainserimentospesa = models.DateTimeField('Data inserimento' ,default=timezone.now)
     tipopagamento = models.ForeignKey(Tipipagamento, verbose_name='Tipo di Pagamento')
-    userLogged = models.ForeignKey(User)
+#     userLogged = models.ForeignKey(User)
     today = datetime.date.today()
     @property
     def subtotal(self):
