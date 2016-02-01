@@ -1,18 +1,29 @@
 from django.contrib import admin
 # Register your models here.
-from appspesemodulo.models import userTable, Categoriaspese, Tipipagamento
-#from django.contrib.gis.gdal.field import Field
-from django.db.models import Sum, Avg
-#from django.db.models.query import QuerySet
-#from django.template.context_processors import request
-from django.contrib.admin.views.main import ChangeList
 
+from appspesemodulo.models import userTable, Categoriaspese, Tipipagamento
+  
+# class userTableAdminInLine(admin.TabularInline):
+#     model = userTable
+#     extra = 1
+### Da metter sotto
+#     fieldset = [
+#         (None,               {'fields': ['descrizione']}),
+#         ('Importo speso',    {'fields': ['importo']}),
+#         ('Categoria Spesa',  {'fields': ['catspesa']}),
+#         ('Date information', {'fields': ['dataspesa'],'classes':['collapse']}),
+#         ('Tipo di Pagamento',{'fields': ['tipopagamento']}),
+#     ]
+#     
+#     inlines = [userTableAdminInLine]
 
 class userTableAdmin(admin.ModelAdmin):
+
     list_display = (('descrizione','importo','catspesa','dataspesa','tipopagamento'))
     list_filter = ['dataspesa', 'catspesa']
     ordering = ['-dataspesa']
-
+    
+    
 
 class CategoriaspeseAdmin(admin.ModelAdmin):
     list_display = ['tipologia', 'data_inserimento']
