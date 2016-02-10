@@ -10,6 +10,7 @@ from .models import userTable
 from django.db.models import Sum
 from django.contrib.auth import authenticate, login, logout 
 from monthdelta import monthdelta
+from django.http.response import HttpResponseRedirect
 
 
 # def index(request):
@@ -24,7 +25,7 @@ def my_login_view(request):
     if user is not None:
         if user.is_active:
             login(request, user)
-            return (request, currmonth(request))
+            return HttpResponseRedirect('currmonth')
         else:
             return render(request, 'appspesemodulo/userinactive.html')
     else:    

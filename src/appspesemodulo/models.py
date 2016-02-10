@@ -4,6 +4,7 @@ from django.db import models
 import datetime
 from django.utils import timezone
 from django.db.models import Sum
+from django.template.context_processors import request
 
 # Create your models here.
 
@@ -38,7 +39,7 @@ class userTable(models.Model):
     dataspesa = models.DateTimeField('Data Spesa')
     datainserimentospesa = models.DateTimeField('Data inserimento' ,default=timezone.now)
     tipopagamento = models.ForeignKey(Tipipagamento, verbose_name='Tipo di Pagamento')
-#     userLogged = models.ForeignKey(User)
+    userLogged = models.CharField(max_length=30, verbose_name='Utente che ha effettuato la spesa')
     today = datetime.date.today()
     @property
     def subtotal(self):

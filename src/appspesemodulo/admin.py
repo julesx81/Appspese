@@ -1,29 +1,25 @@
 from django.contrib import admin
+from django import forms
+
 # Register your models here.
 
 from appspesemodulo.models import userTable, Categoriaspese, Tipipagamento
   
-# class userTableAdminInLine(admin.TabularInline):
-#     model = userTable
-#     extra = 1
-### Da metter sotto
-#     fieldset = [
-#         (None,               {'fields': ['descrizione']}),
-#         ('Importo speso',    {'fields': ['importo']}),
-#         ('Categoria Spesa',  {'fields': ['catspesa']}),
-#         ('Date information', {'fields': ['dataspesa'],'classes':['collapse']}),
-#         ('Tipo di Pagamento',{'fields': ['tipopagamento']}),
-#     ]
-#     
-#     inlines = [userTableAdminInLine]
+class userTableForm(forms.ModelForm):
+    class Meta:
+        model = userTable
+        exclude = ['userLogged']
 
 class userTableAdmin(admin.ModelAdmin):
-
-    list_display = (('descrizione','importo','catspesa','dataspesa','tipopagamento'))
+    list_display = (('descrizione','importo','catspesa','dataspesa','tipopagamento','userLogged'))
     list_filter = ['dataspesa', 'catspesa']
     ordering = ['-dataspesa']
-    
-    
+    form = userTableForm
+        
+    def save_model(self, request, obj, form, change):
+        obj.userLogged = str(request.user)
+        obj.save()
+   
 
 class CategoriaspeseAdmin(admin.ModelAdmin):
     list_display = ['tipologia', 'data_inserimento']
