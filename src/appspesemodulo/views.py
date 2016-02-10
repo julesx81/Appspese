@@ -11,8 +11,11 @@ from django.db.models import Sum
 from django.contrib.auth import authenticate, login, logout 
 from monthdelta import monthdelta
 
+
 # def index(request):
 #     return HttpResponse("Hello, world. You're at the appspese index.")
+def pagelogin(request):
+    return render(request, 'registration/login.html')
 
 def my_login_view(request):
     username = request.POST['username']
@@ -21,7 +24,7 @@ def my_login_view(request):
     if user is not None:
         if user.is_active:
             login(request, user)
-            return (request, mesecorrente(request))
+            return (request, currmonth(request))
         else:
             return render(request, 'appspesemodulo/userinactive.html')
     else:    
@@ -29,9 +32,9 @@ def my_login_view(request):
     
 def my_logout(request):
     logout(request)
-    return (request, 'appspesemodulo/logout.html')
+    return (request, 'registration/logout.html')
     
-def mesecorrente(request):
+def currmonth(request):
     today = datetime.date.today()
 #     lastMonth = datetime.date.today() - timedelta(days=30)
     thisMonth = today.month
@@ -41,7 +44,7 @@ def mesecorrente(request):
     return render(request, 'appspesemodulo/mychange_list.html', {'tblUser':tblUser, 'importoSummed':importoSummed, 'objNum':objNum})
 # mychange_list.html',{}) #{'tblUser' : tblUser})
 
-def meseprecedente(request):
+def lastmonth(request):
 #     today = datetime.date.today()
     lastMonth = datetime.date.today() - monthdelta(1)
 #     thisMonth = today.month

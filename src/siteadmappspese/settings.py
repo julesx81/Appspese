@@ -26,7 +26,7 @@ from settings_private import SECRET_KEY
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+LOGIN_REDIRECT_URL = '/'
 
 # Application definition
 
