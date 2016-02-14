@@ -1,0 +1,17 @@
+{% extends "contrib/admin/templates/admin/change_list.html" %}
+{% load i18n admin_static %}
+
+{% block result_list %}
+    <div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-6">	
+				<table class="table">
+							<tr>
+								<td> Totale : {% if objNum > 1 %} {{ objNum }} spese {% else %} {{ objNum }} spesa {%endif%} </td>
+								<td>{{ importoSummed  }} €</td>
+							</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+{% endblock %}

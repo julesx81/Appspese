@@ -32,7 +32,7 @@ class Tipipagamento(models.Model):
     def __str__(self):
         return self.metodopagamento 
     
-class userTable(models.Model):
+class Spesa(models.Model):
     catspesa = models.ForeignKey(Categoriaspese, verbose_name='Categoria Spesa')
     descrizione = models.CharField(max_length=300)
     importo = models.DecimalField(max_digits=9, decimal_places=2)
@@ -43,10 +43,11 @@ class userTable(models.Model):
     today = datetime.date.today()
     @property
     def subtotal(self):
-        return userTable.objects.aggregate(Sum('importo'))
+        return Spesa.objects.aggregate(Sum('importo'))
 
     class Meta:
         ordering = ['-dataspesa',]
+        verbose_name_plural = 'Spese'
         
         
  
