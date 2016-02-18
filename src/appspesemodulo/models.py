@@ -44,6 +44,7 @@ class Spesa(models.Model):
     @property
     def subtotal(self):
         return Spesa.objects.aggregate(Sum('importo'))
+    
 
     class Meta:
         ordering = ['-dataspesa',]
