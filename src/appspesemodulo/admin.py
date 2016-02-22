@@ -7,7 +7,7 @@ from . models import Spesa, Categoriaspese, Tipipagamento
 from django.contrib.sites import requests
 from django.template import Context, Template
 from monthdelta import monthdelta
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 
   
@@ -23,28 +23,45 @@ class MonthFilterCustom(admin.SimpleListFilter):
     parameter_name = 'mese'
     today = date.today()
     thisMonth = today.month
-    
-
-    
+   
     def lookups(self, request, model_admin):
         return(
             ('mese_corrente', _('mese corrente')),
             ('mese_precedente', _('mese precedente')),
             ('mese-2', _('mese -2')),
+            ('mese-3', _('mese -3')),
         )
     
+   
     def queryset(self, request, queryset):
         today = date.today()
         thisMonth = today.month
+#         lastMonth = thisMonth - 1
         if self.value() == 'mese_corrente':
-            return queryset.filter(dataspesa__month=thisMonth)
-            
+            year = today.year
+            return queryset.filter(dataspesa__year=year, dataspesa__month=thisMonth).filter(userLogged=str(request.user))
         if self.value() == 'mese_precedente':
-            return queryset.filter(dataspesa__month=thisMonth-1),
+            year = today.year
+            month = today.month - 1
+            if month == 0:
+                month = 12
+                year = year -1
+            return queryset.filter(dataspesa__year=year, dataspesa__month=month).filter(userLogged=str(request.user))    
         if self.value() == 'mese-2':
-            return queryset.filter(dataspesa__month=thisMonth-2),                            
+            year = today.year
+            month = today.month -2
+            if month == 0:
+                month = 12
+                year = year -1
+            return queryset.filter(dataspesa__year=year, dataspesa__month=month).filter(userLogged=str(request.user))
+        if self.value() == 'mese-3':
+            year = today.year
+            month = today.month -3
+            if month < 1:
+                month = 11
+                year = year -1
+            return queryset.filter(dataspesa__year=year, dataspesa__month=month).filter(userLogged=str(request.user))
     
-
 class SpesaAdmin(admin.ModelAdmin):
     list_display = (('descrizione','importo','catspesa','dataspesa','tipopagamento','userLogged',))
     list_filter = (MonthFilterCustom,)
@@ -61,8 +78,6 @@ class SpesaAdmin(admin.ModelAdmin):
         obj.userLogged = str(request.user)
         obj.save()
         
-    def querysetcustom(self, request, queryset):
-        return queryset.filter(userLogged = 'admin',)
     
 
 class CategoriaspeseAdmin(admin.ModelAdmin):
