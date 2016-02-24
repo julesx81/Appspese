@@ -8,35 +8,41 @@ from django.contrib.sites import requests
 from django.template import Context, Template
 from monthdelta import monthdelta
 from datetime import date, datetime, timedelta
+from django.core.paginator import Paginator
 
-
-  
-# class SpesaForm(forms.ModelForm):
-#     class Meta:
-#         model = Spesa
-
-# class SpesaInLine(admin.TabularInline):
-#     model = Spesa
 
 class MonthFilterCustom(admin.SimpleListFilter):
-    title = _('Filtro Mese Personale')
+    title = _('Filtro Mese Custom')
     parameter_name = 'mese'
     today = date.today()
     thisMonth = today.month
-   
+#     default_value = 
+       
     def lookups(self, request, model_admin):
         return(
-            ('mese_corrente', _('mese corrente')),
-            ('mese_precedente', _('mese precedente')),
-            ('mese-2', _('mese -2')),
-            ('mese-3', _('mese -3')),
+            ('mese_corrente', _('Mese corrente')),
+            ('mese_precedente', _('Mese precedente')),
+            ('mese-2', _('Mese -2')),
+            ('mese-3', _('Mese -3')),
+            ('all', _('All')),
         )
-    
-   
+    def choices(self, cl):
+        for lookup, title in self.lookup_choices:
+            yield {
+                'selected': self.value() == lookup,
+                'query_string': cl.get_query_string({
+                    self.parameter_name: lookup,
+                }, []),
+                'display': title,
+            }
+                   
     def queryset(self, request, queryset):
         today = date.today()
         thisMonth = today.month
 #         lastMonth = thisMonth - 1
+        if self.value() == None:
+            year = today.year
+            return queryset.filter(dataspesa__year=year, dataspesa__month=thisMonth).filter(userLogged=str(request.user))
         if self.value() == 'mese_corrente':
             year = today.year
             return queryset.filter(dataspesa__year=year, dataspesa__month=thisMonth).filter(userLogged=str(request.user))
@@ -61,19 +67,27 @@ class MonthFilterCustom(admin.SimpleListFilter):
                 month = 11
                 year = year -1
             return queryset.filter(dataspesa__year=year, dataspesa__month=month).filter(userLogged=str(request.user))
-    
+        if self.value() == 'All':
+            return queryset.all()
+
 class SpesaAdmin(admin.ModelAdmin):
     list_display = (('descrizione','importo','catspesa','dataspesa','tipopagamento','userLogged',))
-    list_filter = (MonthFilterCustom,)
+    list_filter = ((MonthFilterCustom), ('catspesa', admin.RelatedFieldListFilter),)
+    list_display_links = ('descrizione','importo',)
+    search_fields = ['^descrizione', 'importo']
     ordering = ['-dataspesa']
-#     inlines = [
-#         SpesaInLine
-#     ]
+    list_per_page =  10
+    save_on_top = True
+    
     fieldsets = (
         ('MODIFICA SPESA', {
             'fields': ('descrizione','importo','catspesa','tipopagamento','dataspesa')        
         }),
     )
+    
+        
+    
+    
     def save_model(self, request, obj, form, change):
         obj.userLogged = str(request.user)
         obj.save()
