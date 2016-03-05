@@ -3,19 +3,42 @@ from django.utils.translation import ugettext_lazy as _
 # Register your models here.
 
 from . models import Spesa, Categoriaspese, Tipipagamento
-
-from django.contrib.sites import requests
-from django.template import Context, Template
 from monthdelta import monthdelta
 from datetime import date, datetime, timedelta
-from django.core.paginator import Paginator
+from django.contrib.admin.sites import AdminSite
 
-
+# class YearFilterCustom(admin.SimpleListFilter):
+#     title = _('Anno')
+#     parameter_name = 'anno'
+#     
+#     def lookups(self, request, model_admin):
+#         return(
+#             ('anno_corrente', _('Anno Corrente')),
+#             ('anno_precedente', _('Anno Precedente')),
+#         )
+#     
+#     def choices(self, cl):
+#         for lookup, title in self.lookup_choices:
+#             yield {
+#                 'selected': self.value() == lookup,
+#                 'query_string': cl.get_query_string({
+#                     self.parameter_name: lookup,
+#                 }, []),
+#                 'display': title,
+#             }
+#     
+#     def queryset(self, request, queryset):
+#         today = date.today()
+#         thisYear = today.year
+#         if self.value() == 'anno_corrente':
+#             return queryset.filter(dataspesa__year=thisYear).filter(userLogged=str(request.user))
+#         if self.value() == 'anno_precendente':
+#             Year = thisYear - 1 
+#             return queryset.filter(dataspesa__year=Year).filter(userLogged=str(request.user))
+    
 class MonthFilterCustom(admin.SimpleListFilter):
-    title = _('Filtro Mese Custom')
+    title = _('Mese')
     parameter_name = 'mese'
-    today = date.today()
-    thisMonth = today.month
 #     default_value = 
        
     def lookups(self, request, model_admin):
@@ -26,6 +49,7 @@ class MonthFilterCustom(admin.SimpleListFilter):
             ('mese-3', _('Mese -3')),
             ('all', _('All')),
         )
+        
     def choices(self, cl):
         for lookup, title in self.lookup_choices:
             yield {
@@ -71,13 +95,14 @@ class MonthFilterCustom(admin.SimpleListFilter):
             return queryset.all()
 
 class SpesaAdmin(admin.ModelAdmin):
-    list_display = (('descrizione','importo','catspesa','dataspesa','tipopagamento','userLogged',))
-    list_filter = ((MonthFilterCustom), ('catspesa', admin.RelatedFieldListFilter),)
+    list_display = ('descrizione','importo','catspesa','dataspesa','tipopagamento','userLogged',)
+    list_filter = ((MonthFilterCustom), ('catspesa', admin.RelatedFieldListFilter),)  #(YearFilterCustom),
     list_display_links = ('descrizione','importo',)
     search_fields = ['^descrizione', 'importo']
     ordering = ['-dataspesa']
     list_per_page =  10
     save_on_top = True
+    
     
     fieldsets = (
         ('MODIFICA SPESA', {
@@ -85,22 +110,35 @@ class SpesaAdmin(admin.ModelAdmin):
         }),
     )
     
-        
-    
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        extra_context['some_var'] = 'This is what I want to show'
+        return super(SpesaAdmin, self).changelist_view(request, extra_context=extra_context)
     
     def save_model(self, request, obj, form, change):
-        obj.userLogged = str(request.user)
+        if not change:
+            obj.userLogged = str(request.user) 
+#         obj.userLogged = str(request.user) 
         obj.save()
-        
+          
     
 
 class CategoriaspeseAdmin(admin.ModelAdmin):
     list_display = ['tipologia', 'data_inserimento']
 
 
-
+class MyAppspesesite(AdminSite):
+    site_header = 'Tieni conto delle tue spese'
+    site_index_title = 'Hi, '
+    site_title  = 'Applicazione Appspese'
+    site_url = '?mese=mese_corrente'
     
 
+
+    
+admin_site = MyAppspesesite(name='myadmin')
+admin_site.register(Spesa, SpesaAdmin)
 admin.site.register(Categoriaspese, CategoriaspeseAdmin)
 admin.site.register(Tipipagamento)
-admin.site.register(Spesa, SpesaAdmin ) 
+admin.site.register(Spesa, SpesaAdmin)
+

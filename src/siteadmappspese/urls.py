@@ -16,10 +16,11 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-
+from appspesemodulo.admin import admin_site
 
 
 urlpatterns = [
     url(r'^appspesemodulo/', include('appspesemodulo.urls')),
     url(r'^admin/', admin.site.urls),
+    url(r'^myadmin/', admin_site.urls ),
 ]
