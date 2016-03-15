@@ -112,7 +112,7 @@ class SpesaAdmin(admin.ModelAdmin):
     
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}
-        extra_context['some_var'] = 'This is what I want to show'
+        extra_context['subtotal'] = ""
         return super(SpesaAdmin, self).changelist_view(request, extra_context=extra_context)
     
     def save_model(self, request, obj, form, change):
