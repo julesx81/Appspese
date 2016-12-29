@@ -1,0 +1,30 @@
+{% extends "admin/base.html" %}
+<!-- {{ site_title|default:_('Django site admin') }} -->
+{% block title %}{{ title }} | AppSpese {% endblock %}
+
+{% block extrastyle %}
+<style>
+	#header {
+		background-color: #f54008;
+	}
+	div.breadcrumbs {
+		background-color: #ff764b;
+	}
+	.module caption, .inline-group h2 {
+		background-color: #ff764b;
+	}
+	#changelist-filter h2 {
+		background-color: #ff764b;
+	}
+	.paginator a:link, .paginator a:visited {
+		background-color: #ff764b;
+	}
+	
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
