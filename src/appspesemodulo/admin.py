@@ -6,41 +6,14 @@ from . models import Spesa, Categoriaspese, Tipipagamento
 from monthdelta import monthdelta
 from datetime import date, datetime, timedelta
 from django.contrib.admin.sites import AdminSite
+from django.contrib.auth.decorators import login_required
 
-# class YearFilterCustom(admin.SimpleListFilter):
-#     title = _('Anno')
-#     parameter_name = 'anno'
-#     
-#     def lookups(self, request, model_admin):
-#         return(
-#             ('anno_corrente', _('Anno Corrente')),
-#             ('anno_precedente', _('Anno Precedente')),
-#         )
-#     
-#     def choices(self, cl):
-#         for lookup, title in self.lookup_choices:
-#             yield {
-#                 'selected': self.value() == lookup,
-#                 'query_string': cl.get_query_string({
-#                     self.parameter_name: lookup,
-#                 }, []),
-#                 'display': title,
-#             }
-#     
-#     def queryset(self, request, queryset):
-#         today = date.today()
-#         thisYear = today.year
-#         if self.value() == 'anno_corrente':
-#             return queryset.filter(dataspesa__year=thisYear).filter(userLogged=str(request.user))
-#         if self.value() == 'anno_precendente':
-#             Year = thisYear - 1 
-#             return queryset.filter(dataspesa__year=Year).filter(userLogged=str(request.user))
     
 class MonthFilterCustom(admin.SimpleListFilter):
     title = _('Mese')
     parameter_name = 'mese'
 #     default_value = 
-       
+      
     def lookups(self, request, model_admin):
         return(
             ('mese_corrente', _('Mese corrente')),
@@ -59,7 +32,8 @@ class MonthFilterCustom(admin.SimpleListFilter):
                 }, []),
                 'display': title,
             }
-                   
+    
+              
     def queryset(self, request, queryset):
         today = date.today()
         thisMonth = today.month
@@ -95,10 +69,13 @@ class MonthFilterCustom(admin.SimpleListFilter):
             return queryset.all()
 
 class SpesaAdmin(admin.ModelAdmin):
-    list_display = ('descrizione','importo','catspesa','dataspesa','tipopagamento','userLogged',)
+#     change_list_template = 'custom_change_list_results.html'
+#     list_display = ("__unicode",'descrizione','importo','catspesa','dataspesa','tipopagamento','userLogged',)
+    list_display = ["descrizione","importo","catspesa","dataspesa","tipopagamento","userLogged",]
     list_filter = ((MonthFilterCustom), ('catspesa', admin.RelatedFieldListFilter),)  #(YearFilterCustom),
+#     list_editable = ["descrizione"]
     list_display_links = ('descrizione','importo',)
-    search_fields = ['^descrizione', 'importo']
+    search_fields = ['descrizione', 'importo']
     ordering = ['-dataspesa']
     list_per_page =  10
     save_on_top = True
@@ -109,6 +86,9 @@ class SpesaAdmin(admin.ModelAdmin):
             'fields': ('descrizione','importo','catspesa','tipopagamento','dataspesa')        
         }),
     )
+    
+    class Meta:
+        model = Spesa
     
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}

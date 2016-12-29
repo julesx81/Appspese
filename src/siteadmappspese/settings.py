@@ -56,7 +56,7 @@ ROOT_URLCONF = 'siteadmappspese.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'static', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -72,6 +72,12 @@ TEMPLATES = [
 
 
 WSGI_APPLICATION = 'siteadmappspese.wsgi.application'
+
+#templates inseriti da me.
+TEMPLATES_DIRS = (
+   os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "static", "templates"),
+)
+
 
 
 # Database
@@ -118,10 +124,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
+LOCAL_NAME = 'it_IT'
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Berlin'
 
 USE_I18N = True
 

@@ -8,7 +8,7 @@ from datetime import timedelta
 from django.utils import timezone
 from . models import Spesa
 from django.db.models import Sum
-from django.contrib.auth import authenticate, login, logout 
+from django.contrib.auth import authenticate, login, logout
 from monthdelta import monthdelta
 from django.http.response import HttpResponseRedirect
 
@@ -39,17 +39,34 @@ def currmonth(request):
     today = datetime.date.today()
 #     lastMonth = datetime.date.today() - timedelta(days=30)
     thisMonth = today.month
-    tblUser = Spesa.objects.filter(dataspesa__month=thisMonth).order_by('-dataspesa')
-    importoSummed = Spesa.objects.filter(dataspesa__month=today.month).order_by('-dataspesa').aggregate(Sum('importo')).values()[0] 
+    tblUser = Spesa.objects.filter(dataspesa__year=today.year, dataspesa__month=thisMonth).order_by('-dataspesa')
+    importoSummed = Spesa.objects.filter(dataspesa__year=today.year, dataspesa__month=today.month).order_by('-dataspesa').aggregate(Sum('importo')).values()[0] 
     objNum = tblUser.count()
-    return render(request, 'appspesemodulo/mychange_list.html', {'tblUser':tblUser, 'importoSummed':importoSummed, 'objNum':objNum})
+    context = {
+        "tbl_User": tblUser,
+        "importoSummed":importoSummed,
+        "objNum":objNum
+    }
+    return render(request, 'appspesemodulo/mychange_list.html', context ) # {'tblUser':tblUser, 'importoSummed':importoSummed, 'objNum':objNum} 
 # mychange_list.html',{}) #{'tblUser' : tblUser})
 
 def lastmonth(request):
-#     today = datetime.date.today()
+    today = datetime.date.today()
     lastMonth = datetime.date.today() - monthdelta(1)
+    thisYear = today.year
 #     thisMonth = today.month
-    tblUser = Spesa.objects.filter(dataspesa__month=lastMonth.month).order_by('-dataspesa')
-    importoSummed = Spesa.objects.filter(dataspesa__month=lastMonth.month).order_by('-dataspesa').aggregate(Sum('importo')).values()[0] 
+    tblUser = Spesa.objects.filter(dataspesa__year=thisYear, dataspesa__month=lastMonth.month).order_by('-dataspesa')
+    importoSummed = Spesa.objects.filter(dataspesa__year=thisYear, dataspesa__month=lastMonth.month).order_by('-dataspesa').aggregate(Sum('importo')).values()[0] 
     objNum = tblUser.count()
-    return render(request, 'appspesemodulo/mychange_list.html', {'tblUser':tblUser, 'importoSummed':importoSummed, 'objNum':objNum})
+    context = {
+        "tbl_User": tblUser,
+        "importoSummed":importoSummed,
+        "objNum":objNum,
+    }
+    return render(request, 'appspesemodulo/mychange_list.html', context )
+
+def custommonth(request):
+    context = {
+        
+    }
+    return render(request, '', context )
